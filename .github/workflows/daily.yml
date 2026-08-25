@@ -5,6 +5,9 @@ on:
   schedule:
     - cron: "30 3 * * *"
 
+permissions:
+  contents: read
+
 jobs:
   daily-production:
     runs-on: ubuntu-latest
@@ -13,7 +16,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Check YouTube API configuration
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          if [ -z "$YOUTUBE_API_KEY" ]; then
+            echo "ERROR: YOUTUBE_API_KEY is not configured."
+            exit 1
+          fi
+
+          echo "YouTube API key is configured."
+          echo "The Phantom Archivist YouTube automation pipeline is ready."
+
       - name: Start daily production
         run: |
-          echo "The Phantom Archivist daily automation has started."
-          echo "Topic discovery will be added next."
+          echo "Daily YouTube production started."
+          echo "Next module: topic discovery."
