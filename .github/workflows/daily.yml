@@ -1,0 +1,19 @@
+name: Phantom Archivist Daily Automation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 3 * * *"
+
+jobs:
+  daily-production:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Start daily production
+        run: |
+          echo "The Phantom Archivist daily automation has started."
+          echo "Topic discovery will be added next."
