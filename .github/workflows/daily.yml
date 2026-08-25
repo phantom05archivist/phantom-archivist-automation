@@ -1,39 +1,19 @@
-name: Phantom Archivist Daily Automation
-
-on:
-  workflow_dispatch:
-  schedule:
-    - cron: "30 3 * * *"
-
-permissions:
-  contents: read
-
-jobs:
-  daily-production:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Check YouTube API configuration
+      - name: Test YouTube API connection
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
           if [ -z "$YOUTUBE_API_KEY" ]; then
-            echo "ERROR: YOUTUBE_API_KEY is not configured."
+            echo "ERROR: YOUTUBE_API_KEY secret is missing."
             exit 1
           fi
 
-          echo "YouTube API key is configured."
-          echo "The Phantom Archivist YouTube automation pipeline is ready."
+          response=$(curl -s \
+            "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=technology&key=${YOUTUBE_API_KEY}")
 
-      - name: Start daily production
-        run: |
-          echo "Daily YouTube production started."
-          echo "Next module: topic discovery."
+          if echo "$response" | grep -q '"error"'; then
+            echo "YouTube API request failed."
+            echo "$response" | head -c 1000
+            exit 1
+          fi
+
+          echo "YouTube Data API connection successful."
