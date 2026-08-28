@@ -13,12 +13,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Test automation
+      - name: Test YouTube API secret
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
-          echo "======================================"
-          echo "PHANTOM ARCHIVIST AUTOMATION"
-          echo "======================================"
-          echo "Workflow started successfully."
-          echo "YouTube automation system is ready."
-          echo "Next stage: YouTube API integration."
-          echo "======================================"
+          if [ -z "$YOUTUBE_API_KEY" ]; then
+            echo "ERROR: YOUTUBE_API_KEY is not configured."
+            exit 1
+          fi
+
+          echo "SUCCESS: YouTube API key is available to the workflow."
+          echo "The key itself will NOT be displayed."
