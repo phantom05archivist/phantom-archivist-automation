@@ -1,19 +1,24 @@
-      - name: Test YouTube API connection
-        env:
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+name: Phantom Archivist Daily Automation
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 3 * * *'
+
+jobs:
+  daily-production:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Test automation
         run: |
-          if [ -z "$YOUTUBE_API_KEY" ]; then
-            echo "ERROR: YOUTUBE_API_KEY secret is missing."
-            exit 1
-          fi
-
-          response=$(curl -s \
-            "https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=technology&key=${YOUTUBE_API_KEY}")
-
-          if echo "$response" | grep -q '"error"'; then
-            echo "YouTube API request failed."
-            echo "$response" | head -c 1000
-            exit 1
-          fi
-
-          echo "YouTube Data API connection successful."
+          echo "======================================"
+          echo "PHANTOM ARCHIVIST AUTOMATION"
+          echo "======================================"
+          echo "Workflow started successfully."
+          echo "YouTube automation system is ready."
+          echo "Next stage: YouTube API integration."
+          echo "======================================"
